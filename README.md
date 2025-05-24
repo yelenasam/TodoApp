@@ -83,5 +83,28 @@ dotnet run --project TodoApp.Client
 
 ### 5.1 Clone
 ```bash
-git clone https://github.com/yelenasam/TodoApp.git
+git clone https://github.com/<your-user>/TodoApp.git
 cd TodoApp
+```
+### 5.2 Trust the local HTTPS dev-certificate (one-time)
+```bash
+dotnet ef database update -p TodoApp.Server 
+```
+### 5.3 Create the database
+```bash
+# applies EF Core 8 migrations
+dotnet ef database update -p TodoApp.Server   
+```
+### 5.4 Run the back-end
+```bash
+dotnet run --project TodoApp.Server --launch-profile https
+# Now listening on:
+#   https://localhost:7186
+#   http://localhost:5097
+```
+> Open https://localhost:7186/swagger to test the API.
+
+### 5.5 Run the WPF client in a second terminal
+```bash
+dotnet run --project TodoApp.Client
+```
