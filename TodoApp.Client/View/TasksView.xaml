@@ -1,0 +1,183 @@
+﻿<UserControl x:Class="TodoApp.Client.View.TasksView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TodoApp.Client.View" 
+             xmlns:vm="clr-namespace:TodoApp.Client.ViewModel"
+             xmlns:converter="clr-namespace:TodoApp.Client.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="614" d:DesignWidth="1300" FontSize="20">
+    <UserControl.Resources>
+        <converter:NullToVisibilityConverter x:Key="NullToVisibilityConv" />
+        <converter:TaskDetailsHeaderConverter x:Key="TaskDetailsHeaderConv" />
+        <converter:DeleteButtonEnabledConverter x:Key="DeleteButtonEnabledConv" />
+        <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConv" />
+        <converter:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConv" />
+
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,10,5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style x:Key="BorderedContainer" TargetType="Border">
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="2"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <!-- Add Task Button -->
+        <StackPanel Orientation="Horizontal" Margin="10" DockPanel.Dock="Top">
+            <Button Content="Add New Task" Command="{Binding AddCommand}" Width="150" Height="40" Margin="0,0,10,0" />
+        </StackPanel>
+
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--Tasks List-->
+            <DataGrid Grid.Column="0"
+                      ItemsSource="{Binding TaskItems}" SelectedItem="{Binding SelectedTask}"
+                      AutoGenerateColumns="False" HeadersVisibility="Column" IsReadOnly="True"
+                      SelectionMode="Single" SelectionUnit="FullRow" Margin="0,0,10,0">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="{Binding RowBackgroundColor}" />
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*" />
+                    <DataGridTextColumn Header="Due Date" Binding="{Binding DueDate}" Width="Auto" />
+                    <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" Width="Auto" />
+                    <DataGridTextColumn Header="Tags" Binding="{Binding TagsText}" Width="1.5*" />
+                    <DataGridTextColumn Header="User" Binding="{Binding UserName}" Width="*" />
+                    <DataGridCheckBoxColumn Header="Done" Binding="{Binding IsComplete}" Width="Auto" IsThreeState="False" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!--Task Details-->
+            <Border Grid.Column="1"  Style="{StaticResource BorderedContainer}" Padding="10" 
+                    Visibility="{Binding SelectedTask, Converter={StaticResource NullToVisibilityConv}}">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <TextBlock Text="{Binding SelectedTask.IsNew, Converter={StaticResource TaskDetailsHeaderConv}}"
+                                FontSize="22" FontWeight="Bold" />
+                        <TextBlock FontSize="20" VerticalAlignment="Center" FontWeight="Bold" Foreground="Red"  Margin="15,0,0,0"
+                                Text="{Binding SelectedTask.LockedByDisplayText}"
+                                Visibility="{Binding SelectedTask.IsLocked, Converter={StaticResource BoolToVisibilityConv}}"/>
+                    </StackPanel>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Title -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Title:"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedTask.Title}" 
+                                IsEnabled="{Binding SelectedTask.IsInEditMode}" Margin="0,0,0,5"/>
+
+                        <!-- Description -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Description:"/>
+                        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource BorderedContainer}" >
+                            <ScrollViewer Grid.Row="1" Grid.Column="1" Height="70" VerticalScrollBarVisibility="Auto">
+                                <TextBox Text="{Binding SelectedTask.Description}" 
+                                     IsEnabled="{Binding SelectedTask.IsInEditMode}" 
+                                     AcceptsReturn="True" TextWrapping="Wrap"/>
+                            </ScrollViewer>
+                        </Border>
+
+                        <!-- Priority -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Priority:"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedTask.Priority}" 
+                                 IsEnabled="{Binding SelectedTask.IsInEditMode}" Margin="0,0,0,5"/>
+
+                        <!-- Due Date -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Due Date:"/>
+                        <DatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding SelectedTask.DueDate}" 
+                                    IsEnabled="{Binding SelectedTask.IsInEditMode}" Margin="0,0,0,5"/>
+
+                        <!-- User -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Assigned to:"/>
+                        <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding AvailableUsers}"
+                                  SelectedItem="{Binding SelectedTask.User, Mode=TwoWay}"
+                                  DisplayMemberPath="Username"
+                                  IsEnabled="{Binding SelectedTask.IsInEditMode}" Margin="0,0,0,5"/>
+                        
+                        <!-- Tags -->
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Tags:"/>
+                        <Border Grid.Row="5" Grid.Column="1" Style="{StaticResource BorderedContainer}" >
+                            <ScrollViewer Grid.Row="5" Grid.Column="1" Height="100" VerticalScrollBarVisibility="Auto">
+                                <ItemsControl ItemsSource="{Binding AvailableTags}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}"
+                                                      IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                      IsEnabled="{Binding DataContext.SelectedTask.IsInEditMode, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+
+                        <Separator Grid.Row="6" Grid.ColumnSpan="2" Margin="0,5,0,5" />
+
+                        <!-- Completed -->
+                        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+                            <TextBlock Text="Completed:" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <CheckBox IsChecked="{Binding SelectedTask.IsComplete, Mode=TwoWay}"
+                                      IsEnabled="{Binding SelectedTask.IsEditable}"
+                                      FontSize="100" Margin="10,0,0,0" VerticalAlignment="Center" BorderThickness="3">
+                                <CheckBox.InputBindings>
+                                    <MouseBinding MouseAction="LeftClick" Command="{Binding SetCompleteCommand}" />
+                                </CheckBox.InputBindings>
+                            </CheckBox>
+                        </StackPanel>
+                    </Grid>
+                    <StackPanel Orientation="Horizontal"  Margin="0,10,0,0">
+                        <Button Content="Edit" 
+                            Command="{Binding EditCommand}" 
+                            Width="90" Margin="0,0,10,0"
+                            IsEnabled="{Binding SelectedTask.IsEditable}" 
+                            Visibility="{Binding SelectedTask.IsInEditMode, 
+                            Converter={StaticResource InverseBoolToVisibilityConv}}" />
+                        <Button Content="Cancel" 
+                            Command="{Binding CancelEditCommand}" 
+                            Width="90" Margin="0,0,10,0"
+                            Visibility="{Binding SelectedTask.IsInEditMode, 
+                            Converter={StaticResource BoolToVisibilityConv}}" />
+                        <Button Content="Save" Command="{Binding UpdateCommand}" 
+                                IsEnabled="{Binding SelectedTask.IsInEditMode}" 
+                                Width="90" Margin="0,0,10,0" />
+                        <Button Content="Delete" Command="{Binding DeleteCommand}" 
+                                IsEnabled="{Binding SelectedTask.CanDelete}" 
+                                Width="90" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</UserControl>
