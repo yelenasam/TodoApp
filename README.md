@@ -28,6 +28,21 @@
 | **SignalR (WebSocket)** | Real-time events: `TaskAdded`, `TaskUpdated`, `TaskDeleted`, `TaskLocked`, `TaskUnlocked`. <br> Keeps every client in sync without polling, minimises traffic, auto-reconnects.<br>Has built-in scalability, simplicity of use, and easy integration with .NET ecosystems. |
 
 ---
+### 2.1 · REST Endpoints
+
+| HTTP Verb | URL                                | Payload / Params        | Purpose                               |
+|-----------|------------------------------------|-------------------------|---------------------------------------|
+| **GET**   | `/api/tasks`                       | –                       | Retrieve all tasks                    |
+| **POST**  | `/api/tasks`                       | `TaskItem` JSON         | Add new task                          |
+| **PUT**   | `/api/tasks/{id}`                  | `TaskItem` JSON         | Update entire task                    |
+| **DELETE**| `/api/tasks/{id}`                  | –                       | Delete task                           |
+| **POST**  | `/api/tasks/{id}/lock`             | `"username"` (string)   | Lock task for editing                 |
+| **POST**  | `/api/tasks/{id}/unlock`           | `"username"` (string) \| `null` | Unlock task                          |
+| **PUT**   | `/api/tasks/{id}/complete`         | `true / false`          | Set completion state                  |
+| **GET**   | `/api/users`                       | –                       | List users (mock auth/demo)           |
+| **GET**   | `/api/tags`                        | –                       | List available tags                   |
+
+---
 
 ## 3 · Design Patterns
 
