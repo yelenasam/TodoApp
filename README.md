@@ -28,6 +28,11 @@
 | **SignalR (WebSocket)** | Real-time events: `TaskAdded`, `TaskUpdated`, `TaskDeleted`, `TaskLocked`, `TaskUnlocked`. <br> Keeps every client in sync without polling, minimises traffic, auto-reconnects.<br>Has built-in scalability, simplicity of use, and easy integration with .NET ecosystems. |
 
 ---
+
+### Edit and Update Sequence Diagram
+![Sequences](docs/img/sequence.png)
+---
+
 ### 2.1 · REST Endpoints
 
 | HTTP Verb | URL                                | Payload / Params        | Purpose                               |
@@ -123,3 +128,30 @@ dotnet run --project TodoApp.Server --launch-profile https
 ```bash
 dotnet run --project TodoApp.Client
 ```
+## 6 TodoApp running:
+### 6.1. Login View:
+![LoginView](docs/img/LoginView.png)
+---
+
+### 6.2. Tasks View:
+The Tasks view displays the all tasks table and selected or new task details.
+<be>All tasks that are locked by someone else will be colored in grey, and all the tasks locked by the user will be green.
+
+![TasksView](docs/img/TasksView.png)
+---
+
+### Selected task locked by someone else:
+![lockedByAnotherClient](docs/img/lockedByAnotherClient.png)
+---
+
+### Selected task locked by the user:
+![editing](docs/img/editing.png)
+---
+
+### Creating New Task:
+![newTask](docs/img/newTask.png)
+---
+
+### 6.3. Swagger:
+![swagger](docs/img/swagger.png)
+---
