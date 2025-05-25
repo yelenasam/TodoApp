@@ -19,6 +19,7 @@ namespace TodoApp.Client.ViewModel
         private TaskItemViewModel? m_selectedTask;
         private string m_userName;
         private TaskItemViewModel? m_pendingNewTask;
+        private string? m_stateFilePath;
 
         public ObservableCollection<TaskItemViewModel> TaskItems { get; } = new();
         public ObservableCollection<User> AvailableUsers { get; } = new();
@@ -75,6 +76,9 @@ namespace TodoApp.Client.ViewModel
         public void UserLogin(string username)
         {
             m_userName = username;
+
+            SetStateFilePath();
+
             ConnectAndLoadAsync();
         }
 
@@ -287,36 +291,42 @@ namespace TodoApp.Client.ViewModel
             }
         }
 
-        private const string SettingsFile = "ui_state.json";
+        private void SetStateFilePath()
+        {
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string stateDir = Path.Combine(appData, "TodoApp");
+            Directory.CreateDirectory(stateDir);
+
+            m_stateFilePath = Path.Combine(stateDir, $"ui_state_{m_userName}.json");
+        }
 
         public void SaveUiState()
         {
+            if (m_stateFilePath is null) 
+                return;
+
             UiState state = new UiState
             {
-                SelectedTaskId = SelectedTask?.Id,
-                IsEditing = SelectedTask?.IsInEditMode ?? false
+                SelectedTaskId = SelectedTask?.Id
             };
 
             string json = JsonSerializer.Serialize(state,
                            new JsonSerializerOptions { WriteIndented = true });
 
-            File.WriteAllText(SettingsFile, json);
+            File.WriteAllText(m_stateFilePath, json);
         }
 
         public void LoadUiState()
         {
-            if (!File.Exists(SettingsFile))
+            if (m_stateFilePath is null || !File.Exists(m_stateFilePath))
                 return;
 
             UiState? state =
-                JsonSerializer.Deserialize<UiState>(File.ReadAllText(SettingsFile));
+                JsonSerializer.Deserialize<UiState>(File.ReadAllText(m_stateFilePath));
 
             if (state?.SelectedTaskId is int taskId)
             {
                 SelectedTask = TaskItems.FirstOrDefault(t => t.Id == taskId);
-
-                if (state.IsEditing && SelectedTask is not null)
-                    SelectedTask.IsInEditMode = true;
             }
         }
     }
@@ -324,7 +334,6 @@ namespace TodoApp.Client.ViewModel
     internal sealed class UiState
     {
         public int? SelectedTaskId { get; set; }
-        public bool IsEditing { get; set; }
     }
 }
 
