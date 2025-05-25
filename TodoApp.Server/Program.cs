@@ -4,7 +4,6 @@ using System.Collections.Concurrent;
 using TodoApp.Server.Data;
 using TodoApp.Server.Hubs;
 using TodoApp.Server.Services;
-using TodoApp.Server.WorkersQueue;
 using TodoApp.Shared.Model;
 
 namespace TodoApp.Server
