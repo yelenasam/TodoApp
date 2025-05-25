@@ -290,7 +290,9 @@ namespace TodoApp.Client.ViewModel
                 m_tasksDataProvider.Delete(SelectedTask.Id);
             }
         }
-
+        /// <summary>
+        /// Saving state for user in separate file
+        /// </summary>
         private void SetStateFilePath()
         {
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
