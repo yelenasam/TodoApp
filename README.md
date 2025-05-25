@@ -40,10 +40,10 @@
 | **GET**   | `/api/tasks`                       | –                       | Retrieve all tasks                    |
 | **POST**  | `/api/tasks`                       | `TaskItem` JSON         | Add new task                          |
 | **PUT**   | `/api/tasks/{id}`                  | `TaskItem` JSON         | Update entire task                    |
-| **DELETE**| `/api/tasks/{id}`                  | –                       | Delete task                           |
+| **DELETE**| `/api/tasks/{id}`                  | `"task id"` (int)       | Delete task                           |
 | **POST**  | `/api/tasks/{id}/lock`             | `"task id"` (int)       | Lock task for editing                 |
 | **POST**  | `/api/tasks/{id}/unlock`           | `"task id"` (int)       | Unlock task                          |
-| **PUT**   | `/api/tasks/{id}/complete`         |  `"task id"` (int)  + `iscompleted` JSON         | Set completion state                  |
+| **PUT**   | `/api/tasks/{id}/complete`         | `"task id"` (int), `iscompleted` JSON | Set completion state                  |
 | **GET**   | `/api/users`                       | –                       | List users (mock auth/demo)           |
 | **GET**   | `/api/tags`                        | –                       | List available tags                   |
 
