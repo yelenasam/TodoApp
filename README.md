@@ -77,7 +77,7 @@ cd TodoApp
 ```
 ### 5.2 Trust the local HTTPS dev-certificate (one-time)
 ```bash
-dotnet ef database update -p TodoApp.Server 
+dotnet dev-certs https --trust
 ```
 ### 5.3 Create the database
 ```bash
