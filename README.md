@@ -40,10 +40,10 @@
 | **GET**   | `/api/tasks`                       | –                       | Retrieve all tasks                    |
 | **POST**  | `/api/tasks`                       | `TaskItem` JSON         | Add new task                          |
 | **PUT**   | `/api/tasks/{id}`                  | `TaskItem` JSON         | Update entire task                    |
-| **DELETE**| `/api/tasks/{id}`                  | –                       | Delete task                           |
-| **POST**  | `/api/tasks/{id}/lock`             | `"username"` (string)   | Lock task for editing                 |
-| **POST**  | `/api/tasks/{id}/unlock`           | `"username"` (string) \| `null` | Unlock task                          |
-| **PUT**   | `/api/tasks/{id}/complete`         | `true / false`          | Set completion state                  |
+| **DELETE**| `/api/tasks/{id}`                  | `"task id"` (int)       | Delete task                           |
+| **POST**  | `/api/tasks/{id}/lock`             | `"task id"` (int)       | Lock task for editing                 |
+| **POST**  | `/api/tasks/{id}/unlock`           | `"task id"` (int)       | Unlock task                          |
+| **PUT**   | `/api/tasks/{id}/complete`         | `"task id"` (int), `iscompleted` JSON | Set completion state                  |
 | **GET**   | `/api/users`                       | –                       | List users (mock auth/demo)           |
 | **GET**   | `/api/tags`                        | –                       | List available tags                   |
 
@@ -77,7 +77,7 @@ cd TodoApp
 ```
 ### 5.2 Trust the local HTTPS dev-certificate (one-time)
 ```bash
-dotnet ef database update -p TodoApp.Server 
+dotnet dev-certs https --trust
 ```
 ### 5.3 Create the database
 ```bash
