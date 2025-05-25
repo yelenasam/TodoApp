@@ -68,11 +68,12 @@ namespace TodoApp.Client.Data
             }
         }
 
-        private async Task HandleHubConnectionClosed(Exception? ex)
+        private Task HandleHubConnectionClosed(Exception? ex)
         {
             m_connected = false;
             m_logger.LogWarning("SignalR closed: " + ex?.Message);
             m_reconnectTimer.Start();
+            return Task.CompletedTask;
         }
 
         private async Task TryReconnectAsync()

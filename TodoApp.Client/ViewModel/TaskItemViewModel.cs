@@ -57,7 +57,7 @@ namespace TodoApp.Client.ViewModel
             get => m_taskItem.Title;
             set
             {
-                m_taskItem.Title = value;
+                m_taskItem.Title = value ?? string.Empty;
                 OnPropertyChanged();
             }
         }

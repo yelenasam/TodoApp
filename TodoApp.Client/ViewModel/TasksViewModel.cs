@@ -81,9 +81,12 @@ namespace TodoApp.Client.ViewModel
         private async void ConnectAndLoadAsync()
         {
             await m_tasksDataProvider.ConnectToServerAsync();
-            LoadUsers();
-            LoadTags();
-            LoadTasks();
+            Task usersLoad = LoadUsers();
+            Task tagsLoad = LoadTags();
+            Task tasksLoad = LoadTasks();
+
+            await Task.WhenAll(tasksLoad, usersLoad, tagsLoad);
+            LoadUiState();
         }
 
         private void RegisterTaskEvents()
@@ -168,7 +171,7 @@ namespace TodoApp.Client.ViewModel
             });
         }
 
-        private async void LoadTasks()
+        private async Task LoadTasks()
         {
             IEnumerable<TaskItem>? tasks = await m_tasksDataProvider.GetAllAsync();
             if (tasks != null)
@@ -180,7 +183,7 @@ namespace TodoApp.Client.ViewModel
             }
         }
 
-        private async void LoadUsers()
+        private async Task LoadUsers()
         {
             List<User> users = await m_usersProvider.GetAllAsync();
 
@@ -191,7 +194,7 @@ namespace TodoApp.Client.ViewModel
             }
         }
 
-        private async void LoadTags()
+        private async Task LoadTags()
         {
             List<Tag> tags = await m_tagsProvider.GetAllAsync();
 
@@ -288,23 +291,40 @@ namespace TodoApp.Client.ViewModel
 
         public void SaveUiState()
         {
-            var state = new
+            UiState state = new UiState
             {
                 SelectedTaskId = SelectedTask?.Id,
                 IsEditing = SelectedTask?.IsInEditMode ?? false
             };
-            File.WriteAllText(SettingsFile, JsonSerializer.Serialize(state));
+
+            string json = JsonSerializer.Serialize(state,
+                           new JsonSerializerOptions { WriteIndented = true });
+
+            File.WriteAllText(SettingsFile, json);
         }
 
         public void LoadUiState()
         {
-            if (File.Exists(SettingsFile))
+            if (!File.Exists(SettingsFile))
+                return;
+
+            UiState? state =
+                JsonSerializer.Deserialize<UiState>(File.ReadAllText(SettingsFile));
+
+            if (state?.SelectedTaskId is int taskId)
             {
-                var json = File.ReadAllText(SettingsFile);
-                var state = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
-                var taskId = Convert.ToInt32(state["SelectedTaskId"]);
                 SelectedTask = TaskItems.FirstOrDefault(t => t.Id == taskId);
+
+                if (state.IsEditing && SelectedTask is not null)
+                    SelectedTask.IsInEditMode = true;
             }
         }
     }
+
+    internal sealed class UiState
+    {
+        public int? SelectedTaskId { get; set; }
+        public bool IsEditing { get; set; }
+    }
 }
+

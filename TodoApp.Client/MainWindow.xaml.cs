@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using TodoApp.Client.View;
 using TodoApp.Client.ViewModel;
 
@@ -27,6 +28,7 @@ public partial class MainWindow : Window
         {
             MainContent.Content = new LoginView { DataContext = m_loginViewModel };
         };
+        this.Closing += OnMainWindowClosing;
     }
 
     private void OnLoginSuccess(string userName)
@@ -35,5 +37,10 @@ public partial class MainWindow : Window
         m_tasksView.DataContext = m_tasksViewModel;
         MainContent.Content = m_tasksView;
         DataContext = m_tasksViewModel;
+    }
+
+    private void OnMainWindowClosing(object? sender, CancelEventArgs e)
+    {
+        m_tasksViewModel.SaveUiState();     
     }
 }

@@ -65,19 +65,9 @@ public partial class App : Application
         if (mainWindow != null)
         {
             mainWindow.Show();
-            mainWindow.Loaded += (s, e) =>
-            {
-                Services.GetRequiredService<TasksViewModel>().LoadUiState();
-            };
         }
 
         GlobalExceptionsHandling();
-    }
-    protected override void OnExit(ExitEventArgs e)
-    {
-        base.OnExit(e);
-        TasksViewModel vm = Services.GetRequiredService<TasksViewModel>();
-        vm.SaveUiState();
     }
 
     private void GlobalExceptionsHandling()
