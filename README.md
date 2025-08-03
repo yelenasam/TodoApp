@@ -20,7 +20,7 @@
 
 ---
 
-## 2 · Communication Protocol reasoning
+## 2 · Communication Protocol
 
 | Channel | reasoning |
 |---------|---------------------|
